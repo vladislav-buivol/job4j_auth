@@ -34,9 +34,15 @@ public class PersonController {
 
     @PostMapping("/")
     public ResponseEntity<Person> create(@RequestBody Person person) {
+        if (this.persons.findById(person.getId()).isEmpty()) {
+            return new ResponseEntity<Person>(
+                    this.persons.save(person),
+                    HttpStatus.CREATED
+            );
+        }
         return new ResponseEntity<Person>(
-                this.persons.save(person),
-                HttpStatus.CREATED
+                person,
+                HttpStatus.ACCEPTED
         );
     }
 
