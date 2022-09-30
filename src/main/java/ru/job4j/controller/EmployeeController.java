@@ -5,13 +5,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.server.ResponseStatusException;
 import ru.job4j.domain.Employee;
 import ru.job4j.domain.Person;
 import ru.job4j.service.EmployeeService;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 @RestController
@@ -36,21 +36,23 @@ public class EmployeeController {
     @GetMapping("{id}")
     public ResponseEntity<Employee> findById(@PathVariable int id) {
         var employee = this.employeeService.findById(id);
-        return new ResponseEntity<Employee>(
-                employee.orElse(new Employee()),
-                employee.isPresent() ? HttpStatus.OK : HttpStatus.NOT_FOUND
-        );
+        if (employee.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee not found");
+        }
+        return new ResponseEntity<Employee>(employee.get(), HttpStatus.OK);
+
     }
 
     @PostMapping("/")
     public ResponseEntity<Employee> create(@RequestBody Employee employee) {
-        if (Objects.requireNonNull(employee.getAccounts()).size() > 0) {
-            Set<Person> accounts = new HashSet<>();
-            for (Person account : employee.getAccounts()) {
-                accounts.add(rest.postForObject(ACCOUNT_API, account, Person.class));
-            }
-            employee.setAccounts(accounts);
+        if (employee == null || employee.getAccounts() == null) {
+            throw new NullPointerException("Employee or account mustn't be empty");
         }
+        Set<Person> accounts = new HashSet<>();
+        for (Person account : employee.getAccounts()) {
+            accounts.add(rest.postForObject(ACCOUNT_API, account, Person.class));
+        }
+        employee.setAccounts(accounts);
         return new ResponseEntity<Employee>(
                 this.employeeService.save(employee),
                 HttpStatus.CREATED
