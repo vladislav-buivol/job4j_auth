@@ -24,7 +24,7 @@ public class ReportsController {
     private static final String API_ID = "http://localhost:8080/person/{id}";
 
     @GetMapping("/")
-    public List<Report> findAll() {
+    public ResponseEntity<List<Report>> findAll() {
         List<Report> rsl = new ArrayList<>();
         List<Person> persons = rest.exchange(
                 API,
@@ -35,7 +35,7 @@ public class ReportsController {
             Report report = Report.of(1, "First", person);
             rsl.add(report);
         }
-        return rsl;
+        return new ResponseEntity<>(rsl, HttpStatus.OK);
     }
 
     @PostMapping("/")
