@@ -26,3 +26,6 @@ env:
 
 services:
   - postgresql
+
+before_script:
+  - psql -c 'create database fullstack_auth;' -U postgres
