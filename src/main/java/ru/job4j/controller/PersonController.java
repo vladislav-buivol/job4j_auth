@@ -15,6 +15,7 @@ import ru.job4j.service.PersonService;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -101,5 +102,18 @@ public class PersonController {
             }
         }));
         LOGGER.error(e.getLocalizedMessage());
+    }
+
+    @PatchMapping("/patch")
+    public Person patch(@RequestBody Person person)
+            throws InterruptedException, InvocationTargetException, IllegalAccessException {
+        Optional<Person> personDataFromDb = persons.findById(person.getId());
+        if (personDataFromDb.isPresent()) {
+            Person current = personDataFromDb.get();
+            current.patch(person);
+            persons.save(current);
+            return current;
+        }
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Person not found");
     }
 }

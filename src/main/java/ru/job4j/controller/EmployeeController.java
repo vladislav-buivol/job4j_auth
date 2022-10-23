@@ -10,8 +10,10 @@ import ru.job4j.domain.Employee;
 import ru.job4j.domain.Person;
 import ru.job4j.service.EmployeeService;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @RestController
@@ -105,5 +107,18 @@ public class EmployeeController {
             this.employeeService.save(employee);
         }
         return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/patch")
+    public Employee patch(@RequestBody Employee employee)
+            throws InterruptedException, InvocationTargetException, IllegalAccessException {
+        Optional<Employee> emp = employeeService.findById(employee.getId());
+        if (emp.isPresent()) {
+            Employee current = emp.get();
+            current.patch(employee);
+            employeeService.save(current);
+            return current;
+        }
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Employee not found");
     }
 }

@@ -1,10 +1,12 @@
 package ru.job4j.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-public class Person {
+public class Person implements Patchable<Person> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -14,6 +16,7 @@ public class Person {
     private String password;
 
     @ManyToOne
+    @JsonIgnore
     private Employee employee;
 
     public int getId() {
@@ -38,6 +41,14 @@ public class Person {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Employee getEmployee() {
+        return employee;
+    }
+
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
     }
 
     @Override

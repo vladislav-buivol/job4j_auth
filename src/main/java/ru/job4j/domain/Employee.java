@@ -1,6 +1,7 @@
 package ru.job4j.domain;
 
 import javax.persistence.*;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -8,7 +9,7 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
-public class Employee {
+public class Employee implements Patchable<Employee> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -49,8 +50,10 @@ public class Employee {
         return hireDate;
     }
 
-    public void setHireDate(String hireDate) throws ParseException {
-        this.hireDate = new SimpleDateFormat("dd-MM-yyyy").parse(hireDate);
+    public void setHireDate(Date hireDate) throws ParseException {
+        String pattern = "dd-MM-yyyy";
+        DateFormat df = new SimpleDateFormat(pattern);
+        this.hireDate = new SimpleDateFormat("dd-MM-yyyy").parse(df.format(hireDate));
     }
 
     public Set<Person> getAccounts() {
@@ -73,7 +76,6 @@ public class Employee {
         this.id = id;
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -94,4 +96,5 @@ public class Employee {
     public int hashCode() {
         return Objects.hash(firstName, secondName, inn, hireDate, accounts);
     }
+
 }
