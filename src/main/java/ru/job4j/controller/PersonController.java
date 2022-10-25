@@ -6,10 +6,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import ru.job4j.domain.Person;
 import ru.job4j.exception.FailedToSaveException;
+import ru.job4j.markers.Operation;
 import ru.job4j.service.PersonService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -54,10 +56,11 @@ public class PersonController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<Person> create(@RequestBody Person person) {
+    public ResponseEntity<Person> create(
+            @Validated(Operation.OnCreate.class) @RequestBody Person person) {
         Optional<Person> p = this.persons.findById(person.getId());
         if (p.isPresent()) {
-            throw new FailedToSaveException("Person already exist.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Person already exist.");
         }
         return new ResponseEntity<Person>(
                 this.persons.save(person),

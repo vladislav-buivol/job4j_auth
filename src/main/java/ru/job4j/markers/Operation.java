@@ -1,4 +1,4 @@
-package ru.job4j.bank.markers;
+package ru.job4j.markers;
 
 public class Operation {
     public interface OnCreate { }

@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.job4j.bank.markers.Operation;
+import ru.job4j.markers.Operation;
 import ru.job4j.bank.model.Book;
 
 import javax.validation.Valid;
@@ -21,7 +21,7 @@ public class BookController {
     private int id = 1;
 
     @PostMapping
-    @Validated(Operation.OnUpdate.class)
+    @Validated(Operation.OnCreate.class)
     public Book save(@Valid @RequestBody Book book) {
         book.setId(id++);
         repository.put(id, book);

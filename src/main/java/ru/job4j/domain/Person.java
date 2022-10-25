@@ -1,8 +1,11 @@
 package ru.job4j.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.validator.constraints.Length;
+import ru.job4j.markers.Operation;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.util.Objects;
 
 @Entity
@@ -12,7 +15,15 @@ public class Person implements Patchable<Person> {
     private int id;
 
     @Column(unique = true)
+    @NotBlank(message = "Login must be non null", groups = {
+            Operation.OnCreate.class, Operation.OnUpdate.class
+    })
     private String login;
+
+    @Length(min = 5, message = "Password must be at least 5 characters",
+            groups = {
+                    Operation.OnCreate.class, Operation.OnUpdate.class
+            })
     private String password;
 
     @ManyToOne

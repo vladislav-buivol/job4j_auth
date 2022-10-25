@@ -1,6 +1,6 @@
 package ru.job4j.bank.model;
 
-import ru.job4j.bank.markers.Operation;
+import ru.job4j.markers.Operation;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
